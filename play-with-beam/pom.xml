@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>play-with-beam</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+            <!-- Core Apache Beam SDK for Java -->
+            <dependency>
+                <groupId>org.apache.beam</groupId>
+                <artifactId>beam-sdks-java-core</artifactId>
+                <version>2.54.0</version> <!-- Use the latest stable version -->
+            </dependency>
+            <!-- Direct Runner (for local JVM execution) -->
+            <dependency>
+                <groupId>org.apache.beam</groupId>
+                <artifactId>beam-runners-direct-java</artifactId>
+                <version>2.54.0</version>
+            </dependency>
+            <!-- Apache Commons (optional but helpful for text handling, utilities) -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.14.0</version>
+            </dependency>
+            <!-- SLF4J (logging framework Beam uses internally) -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>2.0.13</version>
+            </dependency>
+    </dependencies>
+
+
+
+</project>
