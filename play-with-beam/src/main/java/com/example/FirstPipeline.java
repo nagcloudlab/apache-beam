@@ -13,7 +13,7 @@ public class FirstPipeline {
         pipeline
                 .apply("ReadLines", TextIO.read().from("/Users/nag/apache-beam/play-with-beam/input.txt"))
                 .apply("ConvertToUpperCase",MapElements.into(TypeDescriptors.strings()).via(line->line.toUpperCase()))
-                .apply("WriteLines", TextIO.write().to("output.txt").withSuffix(".txt"));
+                .apply("WriteLines", TextIO.write().to("output").withoutSharding().withSuffix(".txt"));
      
         pipeline.run().waitUntilFinish();        
     }
