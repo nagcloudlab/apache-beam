@@ -1,4 +1,4 @@
-package com.example.first;
+package com.example.day3.first;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;

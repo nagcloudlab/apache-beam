@@ -1,4 +1,4 @@
-package com.example.first;
+package com.example.day3.first;
 
 
 import org.apache.beam.sdk.Pipeline;
@@ -6,12 +6,8 @@ import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.Count;
-import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.Filter;
 import org.apache.beam.sdk.transforms.MapElements;
-import org.apache.beam.sdk.transforms.PTransform;
-import org.apache.beam.sdk.transforms.ParDo;
-import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
 
@@ -25,7 +21,7 @@ public class WordCountPipeline2 {
         pipeline
             .apply(TextIO.read().from("/Users/nag/apache-beam/play-with-beam/input.txt"))
             //.apply(FlatMapElements.into(TypeDescriptors.strings()).via(line->Arrays.asList(line.split("[^\\p{L}]"))))
-            .apply(TokenizeForm.of())
+            .apply(TokenizeTransform.of())
             .apply(Filter.by(word->!word.isEmpty()))
             .apply(Count.perElement()) 
             .apply(MapElements.into(TypeDescriptors.strings()).via(wordCount->wordCount.getKey()+": "+wordCount.getValue()))

@@ -1,14 +1,14 @@
-package com.example.first;
+package com.example.day3.first;
 
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.PTransform;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
 
-public class TokenizeForm extends PTransform<PCollection<String>, PCollection<String>> {
+public class TokenizeTransform extends PTransform<PCollection<String>, PCollection<String>> {
     // factory method, to create a new instance of the class
-    public static TokenizeForm of() {
-        return new TokenizeForm();
+    public static TokenizeTransform of() {
+        return new TokenizeTransform();
     }
 
     // transform method, to transform the input PCollection

@@ -1,4 +1,4 @@
-package com.example.first;
+package com.example.day3.first;
 
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.PTransform;
