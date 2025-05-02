@@ -1,18 +1,21 @@
-package com.example;
+package com.example.first;
 
-import java.util.Arrays;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.Count;
+import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.Filter;
-import org.apache.beam.sdk.transforms.FlatMapElements;
 import org.apache.beam.sdk.transforms.MapElements;
+import org.apache.beam.sdk.transforms.PTransform;
+import org.apache.beam.sdk.transforms.ParDo;
+import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-public class WordCountPipeline {
+
+public class WordCountPipeline2 {
 
     public static void main(String[] args) {
         
@@ -21,11 +24,13 @@ public class WordCountPipeline {
 
         pipeline
             .apply(TextIO.read().from("/Users/nag/apache-beam/play-with-beam/input.txt"))
-            .apply(FlatMapElements.into(TypeDescriptors.strings()).via(line->Arrays.asList(line.split("[^\\p{L}]"))))
+            //.apply(FlatMapElements.into(TypeDescriptors.strings()).via(line->Arrays.asList(line.split("[^\\p{L}]"))))
+            .apply(TokenizeForm.of())
             .apply(Filter.by(word->!word.isEmpty()))
             .apply(Count.perElement()) 
             .apply(MapElements.into(TypeDescriptors.strings()).via(wordCount->wordCount.getKey()+": "+wordCount.getValue()))
-            .apply(TextIO.write().to("wordscount-output").withoutSharding().withSuffix(".txt"));
+            //.apply(TextIO.write().to("wordscount-output").withoutSharding().withSuffix(".txt"));
+            .apply(PrintElementsTransform.of());
             
         pipeline.run().waitUntilFinish();
 
@@ -33,3 +38,5 @@ public class WordCountPipeline {
     }
     
 }
+
+

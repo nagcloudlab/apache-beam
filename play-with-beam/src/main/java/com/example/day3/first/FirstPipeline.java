@@ -1,4 +1,4 @@
-package com.example;
+package com.example.first;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
