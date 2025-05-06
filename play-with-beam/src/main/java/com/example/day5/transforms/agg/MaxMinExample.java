@@ -1,4 +1,4 @@
-package com.example.day3.transforms.agg;
+package com.example.day5.transforms.agg;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.transforms.Max;
@@ -8,7 +8,10 @@ import org.apache.beam.sdk.transforms.SimpleFunction;
 import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PCollection;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Comparator;
+
 
 public class MaxMinExample {
     public static void main(String[] args) {
@@ -68,7 +71,73 @@ public class MaxMinExample {
             }
         }));
 
+
+
+        PCollection<KV<String,Product>> products = pipeline.apply("CreateProducts",
+                org.apache.beam.sdk.transforms.Create.of(
+                        KV.of("Electronics", new Product("Laptop", 1200, 100)),
+                        KV.of("Electronics", new Product("Smartphone", 800, 50)),
+                        KV.of("Furniture", new Product("Sofa", 500, 200)),
+                        KV.of("Furniture", new Product("Table", 300, 50))
+                ));
+
+        // ✅ Max.perKey() for products
+        PCollection<KV<String, Product>> maxProductPerCategory = products.apply("MaxProductPerCategory", Max.<String, Product>perKey());
+        maxProductPerCategory.apply("PrintMaxProductPerCategory", MapElements.via(new SimpleFunction<KV<String, Product>, Void>() {
+            @Override
+            public Void apply(KV<String, Product> input) {
+                System.out.println("Category: " + input.getKey() + " → Most Expensive Product: " + input.getValue().getName() + " ($" + input.getValue().getPrice() + ")");
+                return null;
+            }
+        }));
+
+        // FInd max product by discount using custom comparator
+
+//        PCollection<KV<String, Product>> maxDiscountProductPerCategory = products.apply("MaxDiscountProductPerCategory", Max.<String, Product,>perKey(new Comparator<Product>() {
+//            @Override
+//            public int compare(Product p1, Product p2) {
+//                return Integer.compare(p1.getDiscount(), p2.getDiscount());
+//            }
+//        }));
+
+//        maxDiscountProductPerCategory.apply("PrintMaxDiscountProductPerCategory", MapElements.via(new SimpleFunction<KV<String, Product>, Void>() {
+//            @Override
+//            public Void apply(KV<String, Product> input) {
+//                System.out.println("Category: " + input.getKey() + " → Highest Discount Product: " + input.getValue().getName() + " (" + input.getValue().getDiscount() + "% off)");
+//                return null;
+//            }
+//        }));
+
+
         pipeline.run().waitUntilFinish();
     }
+}
+
+
+class Product implements Serializable, Comparable<Product> {
+    private String name;
+    private int price;
+    private int discount;
+
+    public Product(String name, int price, int discount) {
+        this.name = name;
+        this.price = price;
+        this.discount = discount;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public int getPrice() {
+        return price;
+    }
+    public int getDiscount() {
+        return discount;
+    }
+    @Override
+    public int compareTo(Product other) {
+        return Integer.compare(this.price, other.price);
+    }
+
 }
 

@@ -7,16 +7,18 @@ import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.options.StreamingOptions;
-import org.apache.beam.sdk.transforms.Filter;
-import org.apache.beam.sdk.transforms.MapElements;
-import org.apache.beam.sdk.transforms.ParDo;
-import org.apache.beam.sdk.transforms.SimpleFunction;
+import org.apache.beam.sdk.transforms.*;
+import org.apache.beam.sdk.transforms.windowing.FixedWindows;
+import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.TypeDescriptor;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.joda.time.Duration;
+import org.joda.time.Instant;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.UUID;
 
 public class StreamProcessingExample {
 
@@ -74,7 +76,9 @@ public class StreamProcessingExample {
                         .withTopic(options.getTopic())
                         .withKeyDeserializer(StringDeserializer.class)
                         .withValueDeserializer(StringDeserializer.class)
-                        .withoutMetadata() // Optional: Exclude metadata
+                        .withStartReadTime(org.joda.time.Instant.now().minus(Duration.standardMinutes(10)))
+                        .withConsumerConfigUpdates(Map.of("enable.auto.commit", "false"))
+                        .withoutMetadata()
                 )
                 .apply("ParseJson", ParDo.of(ParseFn.of()))
                 .apply("FilterInvalidRecords", Filter.by((Transaction transaction) -> {
@@ -96,10 +100,14 @@ public class StreamProcessingExample {
                 .apply("ConvertToString", MapElements.into(TypeDescriptor.of(String.class)).via(transaction -> {
                     return transaction.postingDate + "," + transaction.type + "," + transaction.fromAccount + "," + transaction.toAccount + "," + transaction.amount;
                 }))
-                .apply("WriteToText", TextIO.write().to("valid_transactions").withSuffix(".csv").withoutSharding());
-
-
-        pipeline.run().waitUntilFinish(Duration.standardMinutes(10)); // Set a timeout for the streaming job
+                .apply("ApplyWindowing", Window.into(FixedWindows.of(Duration.standardMinutes(1))))
+                .apply("LogOutput", ParDo.of(new DoFn<String, Void>() {
+                    @DoFn.ProcessElement
+                    public void processElement(ProcessContext c) {
+                        System.out.println("Transaction CSV: " + c.element());
+                    }
+                }));
+        pipeline.run(); // Let it keep running
 
 
     }

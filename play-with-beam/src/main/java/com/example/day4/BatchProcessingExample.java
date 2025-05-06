@@ -1,6 +1,6 @@
 package com.example.day4;
 
-import org.apache.beam.runners.direct.DirectRunner;
+//import org.apache.beam.runners.direct.DirectRunner;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptions;
@@ -17,7 +17,7 @@ public class BatchProcessingExample {
     public static void main(String[] args) {
 
         PipelineOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().create();
-        options.setRunner(DirectRunner.class);
+//        options.setRunner(DirectRunner.class);
         Pipeline pipeline = Pipeline.create(options);
 
         pipeline

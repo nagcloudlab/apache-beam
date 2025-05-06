@@ -1,4 +1,4 @@
-package com.example.day3.transforms.element_wise;
+package com.example.day5.transforms.element_wise;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.transforms.DoFn;
@@ -8,6 +8,25 @@ import org.apache.beam.sdk.transforms.SimpleFunction;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
+class TaggedOutput extends DoFn<Integer, String> {
+    public static final String EVEN = "Even";
+    public static final String ODD = "Odd";
+
+    @ProcessElement
+    public void processElement(@Element Integer number, OutputReceiver<String> out) {
+        if (number % 2 == 0) {
+            out.output(EVEN + ": " + number);
+        } else {
+            out.output(ODD + ": " + number);
+        }
+    }
+
+    public static TaggedOutput of() {
+        return new TaggedOutput();
+    }
+
+}
+
 public class ParDoExample {
     public static void main(String[] args) {
         Pipeline pipeline = Pipeline.create();
@@ -16,18 +35,7 @@ public class ParDoExample {
                 1, 2, 3, 4, 5
         ));
 
-        PCollection<String> tagged = numbers.apply(
-                ParDo.of(new DoFn<Integer, String>() {
-                    @ProcessElement
-                    public void processElement(@Element Integer number, OutputReceiver<String> out) {
-                        if (number % 2 == 0) {
-                            out.output("Even: " + number);
-                        } else {
-                            out.output("Odd: " + number);
-                        }
-                    }
-                })
-        );
+        PCollection<String> tagged = numbers.apply(ParDo.of(TaggedOutput.of()));
 
         tagged.apply("PrintTagged", MapElements.via(new SimpleFunction<String, Void>() {
             @Override

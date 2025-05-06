@@ -1,4 +1,4 @@
-package com.example.day3.transforms.agg;
+package com.example.day5.transforms.agg;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.transforms.Mean;
