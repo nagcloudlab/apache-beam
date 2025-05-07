@@ -1,0 +1,2 @@
+[2025-05-07 08:35:51,249] INFO Expiring session 0x1000423e31a0000, timeout of 18000ms exceeded (org.apache.zookeeper.server.ZooKeeperServer)
+[2025-05-07 08:35:53,608] INFO Invalid session 0x1000423e31a0000 for client /127.0.0.1:51892, probably expired (org.apache.zookeeper.server.ZooKeeperServer)

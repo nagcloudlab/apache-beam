@@ -10,7 +10,10 @@ import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 
-public class WindowDropLateTest {
+
+// drop late data
+
+public class WindowWithoutLateness {
     public static void main(String[] args) {
         Pipeline pipeline = Pipeline.create(PipelineOptionsFactory.create());
 

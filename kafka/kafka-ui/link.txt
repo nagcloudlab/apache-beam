@@ -1,1 +1,1 @@
-https://github.com/provectus/kafka-ui/releases
+https://docs.kafka-ui.provectus.io/development/building/without-docker
