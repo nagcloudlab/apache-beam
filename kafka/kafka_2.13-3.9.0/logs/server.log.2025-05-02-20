@@ -1,2 +1,0 @@
-[2025-05-02 22:29:18,709] INFO Expiring session 0x10000ecb9800005, timeout of 18000ms exceeded (org.apache.zookeeper.server.ZooKeeperServer)
-[2025-05-02 22:29:21,551] INFO Invalid session 0x10000ecb9800005 for client /127.0.0.1:53378, probably expired (org.apache.zookeeper.server.ZooKeeperServer)

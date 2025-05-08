@@ -1,5 +1,0 @@
-kafka:
-  clusters:
-    - name: local
-      bootstrapServers: localhost:9092
-dynamic.config.enabled: true

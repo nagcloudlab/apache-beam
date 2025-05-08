@@ -1,4 +1,4 @@
-package com.example.beam.windowing;
+package com.example.day6.transforms.window;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.StringUtf8Coder;
@@ -17,8 +17,7 @@ public class WindowWithLateness {
         TestStream<String> stream = TestStream.create(StringUtf8Coder.of())
                 .addElements(
                         TimestampedValue.of("event", Instant.parse("2025-05-06T10:00:10Z")),
-                        TimestampedValue.of("event", Instant.parse("2025-05-06T10:00:20Z"))
-                )
+                        TimestampedValue.of("event", Instant.parse("2025-05-06T10:00:20Z")))
                 .advanceWatermarkTo(Instant.parse("2025-05-06T10:01:00Z"))
                 .addElements(TimestampedValue.of("event", Instant.parse("2025-05-06T10:00:40Z"))) // Late!
                 .advanceWatermarkToInfinity();
@@ -28,8 +27,7 @@ public class WindowWithLateness {
         PCollection<String> windowed = input.apply(Window.<String>into(FixedWindows.of(Duration.standardMinutes(1)))
                 .withAllowedLateness(Duration.standardMinutes(1)) // ✅ Late data allowed
                 .triggering(Repeatedly.forever(AfterWatermark.pastEndOfWindow()))
-                .accumulatingFiredPanes()
-        );
+                .accumulatingFiredPanes());
 
         PCollection<KV<String, Long>> counted = windowed.apply(Count.perElement());
 

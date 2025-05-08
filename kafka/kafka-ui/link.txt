@@ -1,1 +1,0 @@
-https://docs.kafka-ui.provectus.io/development/building/without-docker

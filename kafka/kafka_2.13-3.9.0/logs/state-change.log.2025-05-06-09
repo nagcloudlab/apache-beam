@@ -1,1 +1,0 @@
-[2025-05-06 09:36:39,069] INFO [Controller id=0 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)

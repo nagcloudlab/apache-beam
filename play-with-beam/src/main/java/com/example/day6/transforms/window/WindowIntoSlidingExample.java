@@ -9,7 +9,6 @@ import org.apache.beam.sdk.transforms.windowing.SlidingWindows;
 import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TimestampedValue;
-import org.apache.beam.sdk.values.TypeDescriptors;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.apache.beam.sdk.values.KV;
@@ -25,8 +24,7 @@ public class WindowIntoSlidingExample {
                         TimestampedValue.of("pageView", Instant.parse("2025-05-06T10:01:00Z")),
                         TimestampedValue.of("pageView", Instant.parse("2025-05-06T10:02:00Z")),
                         TimestampedValue.of("pageView", Instant.parse("2025-05-06T10:03:00Z")),
-                        TimestampedValue.of("pageView", Instant.parse("2025-05-06T10:04:00Z"))
-                ));
+                        TimestampedValue.of("pageView", Instant.parse("2025-05-06T10:04:00Z"))));
 
         // ✅ Apply Sliding Windows: 3-minute windows sliding every 1 minute
         PCollection<String> windowedEvents = events.apply("ApplySlidingWindow",
