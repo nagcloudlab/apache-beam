@@ -10,6 +10,7 @@ public class GrpcHelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase 
 
     @Override
     public void sayHello(HelloRequest request, io.grpc.stub.StreamObserver<HelloResponse> responseObserver) {
+        System.out.println("Received request: " + request.getName());
         String greeting = "Hello " + request.getName();
         HelloResponse response = HelloResponse.newBuilder().setMessage(greeting).build();
         responseObserver.onNext(response);

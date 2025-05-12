@@ -13,12 +13,11 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import java.util.Properties;
 
 @Configuration
 public class KafkaConfig {
-
 //    @Bean
 //    public KafkaProducer<TransactionKey, Transaction> kafkaProducer() {
 //        Properties properties = new Properties();
@@ -29,13 +28,13 @@ public class KafkaConfig {
 //    }
 
 
-    @Bean
-    public NewTopic transactionEvents(){
-        return TopicBuilder.name("transactions")
-                .partitions(3)
-                //.replicas(3)
-                //.config("min.insync.replicas", "2")
-                .build();
-    }
+//    @Bean
+//    public NewTopic transactionEvents(){
+//        return TopicBuilder.name("transactions")
+//                .partitions(3)
+//                //.replicas(3)
+//                //.config("min.insync.replicas", "2")
+//                .build();
+//    }
 
 }
