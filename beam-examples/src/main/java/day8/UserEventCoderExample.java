@@ -1,17 +1,10 @@
-package com.example.chapter2;
+package day8;
 
-import com.example.chapter2.coder.UserEventCoder;
-import com.example.chapter2.event.UserEvent;
+import day8.event.UserEvent;
 import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.coders.CustomCoder;
-import org.apache.beam.sdk.coders.DefaultCoder;
 import org.apache.beam.sdk.transforms.*;
 import org.apache.beam.sdk.values.*;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
-import org.apache.beam.sdk.util.VarInt;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class UserEventCoderExample {
 

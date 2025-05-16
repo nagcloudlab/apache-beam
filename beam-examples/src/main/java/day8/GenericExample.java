@@ -1,4 +1,4 @@
-package com.example.chapter2;
+package day8;
 
 
 class Box<E> {

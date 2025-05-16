@@ -48,7 +48,7 @@
         <!-- Beam Flink Runner -->
         <dependency>
             <groupId>org.apache.beam</groupId>
-            <artifactId>beam-runners-flink-1.13</artifactId> <!-- for Flink 1.17 -->
+            <artifactId>beam-runners-flink-1.15</artifactId> <!-- for Flink 1.17 -->
             <version>${beam.version}</version>
         </dependency>
 

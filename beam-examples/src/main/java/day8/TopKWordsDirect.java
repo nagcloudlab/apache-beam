@@ -1,4 +1,4 @@
-package com.example.chapter2;
+package day8;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.transforms.*;

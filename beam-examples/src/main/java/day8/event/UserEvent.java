@@ -1,7 +1,7 @@
-package com.example.chapter2.event;
+package day8.event;
 
 
-import com.example.chapter2.coder.UserEventCoder;
+import day8.coder.UserEventCoder;
 import org.apache.beam.sdk.coders.DefaultCoder;
 
 @DefaultCoder(UserEventCoder.class)

@@ -1,7 +1,6 @@
-package com.example.chapter2.coder;
+package day8.coder;
 
-import com.example.chapter2.UserEventCoderExample;
-import com.example.chapter2.event.UserEvent;
+import day8.event.UserEvent;
 import org.apache.beam.sdk.coders.CustomCoder;
 import org.apache.beam.sdk.util.VarInt;
 
