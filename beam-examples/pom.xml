@@ -27,6 +27,13 @@
             <version>${beam.version}</version>
         </dependency>
 
+        <!-- Apache Beam SQL Extension -->
+        <dependency>
+            <groupId>org.apache.beam</groupId>
+            <artifactId>beam-sdks-java-extensions-sql</artifactId>
+            <version>${beam.version}</version>
+        </dependency>
+
         <!-- Required for JodaTime -->
         <dependency>
             <groupId>joda-time</groupId>
