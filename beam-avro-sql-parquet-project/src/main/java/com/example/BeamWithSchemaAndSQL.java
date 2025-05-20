@@ -1,29 +1,31 @@
+package com.example;
 
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.extensions.avro.coders.AvroCoder;
 import org.apache.beam.sdk.extensions.sql.SqlTransform;
 import org.apache.beam.sdk.io.FileIO;
 import org.apache.beam.sdk.io.parquet.ParquetIO;
 import org.apache.beam.sdk.schemas.Schema;
-import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.sdk.values.Row;
+import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.Row;
+import org.apache.avro.Schema.Parser;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.SeekableFileInput;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.Schema.Parser;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvroETLPipeline {
+public class BeamWithSchemaAndSQL {
 
-        public static void main(String[] args) throws IOException {
-        
+    public static void main(String[] args) throws IOException {
+
         Pipeline pipeline = Pipeline.create();
 
         // 1. Load input Avro schema
@@ -34,12 +36,11 @@ public class AvroETLPipeline {
         org.apache.avro.Schema outputAvroSchema =
                 new Parser().parse(new File("src/main/resources/account_aggregation.avsc"));
 
-        // 3. Read GenericRecords manually
+        // 3. Read GenericRecords using inputAvroSchema
         List<GenericRecord> recordList = new ArrayList<>();
-        try (DataFileReader<GenericRecord> reader =
-                     new DataFileReader<>(new SeekableFileInput(
-                             new File("src/main/resources/transactions.avro")),
-                             new GenericDatumReader<>())) {
+        try (DataFileReader<GenericRecord> reader = new DataFileReader<>(
+                new SeekableFileInput(new File("src/main/resources/transactions.avro")),
+                new GenericDatumReader<>(inputAvroSchema))) {
             while (reader.hasNext()) {
                 recordList.add(reader.next());
             }
@@ -53,7 +54,7 @@ public class AvroETLPipeline {
                 .addInt64Field("timestamp")
                 .build();
 
-        // 5. Convert to Beam Rows
+        // 5. Convert GenericRecords to Beam Rows
         List<Row> rows = new ArrayList<>();
         for (GenericRecord gr : recordList) {
             rows.add(Row.withSchema(beamSchema)
@@ -65,19 +66,19 @@ public class AvroETLPipeline {
                     .build());
         }
 
-        // 6. Create input collection
+        // 6. Create input PCollection<Row> like table
         PCollection<Row> input = pipeline
                 .apply("Create Input", org.apache.beam.sdk.transforms.Create.of(rows))
                 .setRowSchema(beamSchema);
 
-        // 7. SQL transform
+        // 7. SQL Transformation
         PCollection<Row> result = input.apply(SqlTransform.query(
                 "SELECT accountId, SUM(amount) AS totalAmount " +
                         "FROM PCOLLECTION GROUP BY accountId"));
 
-        // 8. Convert Row to GenericRecord
-        PCollection<GenericRecord> outputRecords = result.apply("Convert to GenericRecord", ParDo.of(
-                new DoFn<Row, GenericRecord>() {
+        // 8. Convert result Rows to GenericRecord
+        PCollection<GenericRecord> outputRecords = result
+                .apply("Convert to GenericRecord", ParDo.of(new DoFn<Row, GenericRecord>() {
                     @ProcessElement
                     public void processElement(@Element Row row, OutputReceiver<GenericRecord> out) {
                         GenericRecord record = new GenericData.Record(outputAvroSchema);
@@ -85,15 +86,15 @@ public class AvroETLPipeline {
                         record.put("totalAmount", row.getDouble("totalAmount"));
                         out.output(record);
                     }
-                }));
+                }))
+                .setCoder(AvroCoder.of(GenericRecord.class, outputAvroSchema)); // Explicit coder
 
-        // 9. Write to Parquet using Avro schema
+        // 9. Write to Parquet
         outputRecords.apply("Write Parquet",
-        FileIO.<GenericRecord>write()
-                .via(ParquetIO.sink(outputAvroSchema))
-                .to("output/sql_parquet_output")
-                .withSuffix(".parquet")
-        );
+                FileIO.<GenericRecord>write()
+                        .via(ParquetIO.sink(outputAvroSchema))
+                        .to("output/sql_parquet_output")
+                        .withSuffix(".parquet"));
 
         pipeline.run().waitUntilFinish();
     }
