@@ -1,9 +1,0 @@
-{
-  "type": "record",
-  "name": "AccountAggregation",
-  "namespace": "com.example",
-  "fields": [
-    { "name": "accountId", "type": "string" },
-    { "name": "totalAmount", "type": "double" }
-  ]
-}
