@@ -1,0 +1,68 @@
+
+
+Beam on DataFlow Runner
+------------------------
+
+
+
+using maven
+-------------------
+
+mvn compile exec:java \
+  -Dexec.mainClass=com.retail360.beam.RetailETLPipelineV4 \
+  -Dexec.args="\
+    --runner=DataflowRunner \
+    --project=steam-curve-458504-g5 \
+    --region=us-central1 \
+    --tempLocation=gs://cloudlab-bucket1/temp \
+    --stagingLocation=gs://cloudlab-bucket1/staging \
+    --inputFile=gs://cloudlab-bucket1/cleaned_customers.csv \
+    --validOutput=gs://cloudlab-bucket1/output/enriched_customers \
+    --invalidOutput=gs://cloudlab-bucket1/output/invalid_rows \
+    --inactiveOutput=gs://cloudlab-bucket1/output/inactive_customers"
+
+
+
+
+
+using Flex Template
+-------------------
+
+
+gcloud dataflow flex-template build \
+  gs://cloudlab-bucket1/templates/retail360-etl-template.json \
+  --image-gcr-path="us-central1-docker.pkg.dev/steam-curve-458504-g5/cloudlab-repo/retail360-etl:latest" \
+  --sdk-language=JAVA \
+  --flex-template-base-image=JAVA17 \
+  --jar="/Users/nag/apache-beam/Final/retail360-etl/beam-etl-pipeline/target/beam-etl-pipeline-1.0-SNAPSHOT.jar" \
+  --env=FLEX_TEMPLATE_JAVA_MAIN_CLASS="com.retail360.beam.RetailETLPipelineV4"
+
+
+
+gcloud dataflow flex-template run "retail360-etl-run-$(date +%Y%m%d-%H%M%S)" \
+  --template-file-gcs-location=gs://cloudlab-bucket1/templates/retail360-etl-template.json \
+  --project=steam-curve-458504-g5 \
+  --region=us-central1 \
+  --parameters inputFile=gs://cloudlab-bucket1/cleaned_customers.csv,\
+validOutput=gs://cloudlab-bucket1/output/enriched_customers,\
+invalidOutput=gs://cloudlab-bucket1/output/invalid_rows
+
+
+
+------------
+
+bigquery
+
+
+mvn clean compile exec:java \
+  -Dexec.mainClass=com.retail360.beam.RetailETLPipelineV5 \
+  -Dexec.args="\
+    --runner=DataflowRunner \
+    --project=steam-curve-458504-g5 \
+    --region=us-central1 \
+    --tempLocation=gs://cloudlab-bucket1/temp \
+    --stagingLocation=gs://cloudlab-bucket1/staging \
+    --inputFile=gs://cloudlab-bucket1/cleaned_customers.csv \
+    --invalidOutput=gs://cloudlab-bucket1/output/invalid_rows \
+    --inactiveOutput=gs://cloudlab-bucket1/output/inactive_customers \
+    --bigQueryTable=steam-curve-458504-g5:retail.enriched_customers"

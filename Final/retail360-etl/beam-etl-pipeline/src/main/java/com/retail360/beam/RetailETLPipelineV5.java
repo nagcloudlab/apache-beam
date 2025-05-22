@@ -3,6 +3,7 @@ package com.retail360.beam;
 import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableRow;
 import com.google.api.services.bigquery.model.TableSchema;
+import org.apache.beam.runners.dataflow.DataflowRunner;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.CoderRegistry;
 import org.apache.beam.sdk.coders.DefaultCoder;
@@ -43,8 +44,11 @@ public class RetailETLPipelineV5 {
     }
 
     public static void main(String[] args) {
+
         RetailOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(RetailOptions.class);
+        options.setRunner(DataflowRunner.class);
         Pipeline pipeline = Pipeline.create(options);
+
         CoderRegistry coderRegistry = pipeline.getCoderRegistry();
         coderRegistry.registerCoderForClass(Customer.class, AvroCoder.of(Customer.class));
 
@@ -125,23 +129,25 @@ public class RetailETLPipelineV5 {
         @ProcessElement
         public void processElement(@Element String line, MultiOutputReceiver out) {
             String[] parts = line.split(",");
-            if (parts.length != 4) {
-                out.get(BranchTags.INVALID).output(line);
-                return;
-            }
-
+//            if (parts.length != 4) {
+//                out.get(BranchTags.INVALID).output(line);
+//                return;
+//            }
+//
             String id = parts[0].trim();
             String name = parts[1].trim();
             String email = parts[2].trim();
             boolean isActive = Boolean.parseBoolean(parts[3].trim());
 
-            if (id.isEmpty() || name.isEmpty() || email.isEmpty()) {
-                out.get(BranchTags.INVALID).output(line);
-            } else if (!isActive) {
-                out.get(BranchTags.INACTIVE).output(new Customer(id, name, email, false));
-            } else {
-                out.get(BranchTags.VALID).output(new Customer(id, name, email, true));
-            }
+            out.get(BranchTags.VALID).output(new Customer(id, name, email, true));
+
+//            if (id.isEmpty() || name.isEmpty() || email.isEmpty()) {
+//                out.get(BranchTags.INVALID).output(line);
+//            } else if (!isActive) {
+//                out.get(BranchTags.INACTIVE).output(new Customer(id, name, email, false));
+//            } else {
+//
+//            }
         }
     }
 }
