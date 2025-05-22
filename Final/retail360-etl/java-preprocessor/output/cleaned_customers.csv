@@ -1,0 +1,4 @@
+customer_id,first_name,last_name,email,country,status
+1001,Alice,Smith,alice@example.com,USA,ACTIVE
+1003,Charlie,Lee,charlie@lee.io,Canada,ACTIVE
+1004,Dan,Smith,dan.smith@example.com,India,ACTIVE
